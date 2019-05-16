@@ -1,4 +1,4 @@
-import * as QtuminfoAPI from '@/services/qtuminfo-api'
+import * as HtmlcoininfoAPI from '@/services/htmlcoininfo-api'
 
 class Transaction {
   static get(id, options = {}) {
@@ -6,10 +6,10 @@ class Transaction {
       if (id.length === 0) {
         return []
       } else {
-        return QtuminfoAPI.get('/txs/' + id.join(','), options)
+        return HtmlcoininfoAPI.get('/txs/' + id.join(','), options)
       }
     } else {
-      return QtuminfoAPI.get(`/tx/${id}`, options)
+      return HtmlcoininfoAPI.get(`/tx/${id}`, options)
     }
   }
 
@@ -18,15 +18,15 @@ class Transaction {
       if (id.length === 0) {
         return []
       } else {
-        return QtuminfoAPI.get('/txs/' + id.join(','), {params: {brief: ''}, ...options})
+        return HtmlcoininfoAPI.get('/txs/' + id.join(','), {params: {brief: ''}, ...options})
       }
     } else {
-      return QtuminfoAPI.get(`/tx/${id}`, {params: {brief: ''}, ...options})
+      return HtmlcoininfoAPI.get(`/tx/${id}`, {params: {brief: ''}, ...options})
     }
   }
 
   static getRecentTransactions(options = {}) {
-    return QtuminfoAPI.get('/recent-txs', options)
+    return HtmlcoininfoAPI.get('/recent-txs', options)
   }
 }
 

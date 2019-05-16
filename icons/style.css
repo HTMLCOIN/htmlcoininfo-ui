@@ -1,16 +1,16 @@
 @font-face {
-  font-family: 'qtum-icons';
-  src: url('fonts/qtum-icons.eot?vyas3r');
-  src: url('fonts/qtum-icons.eot?vyas3r#iefix') format('embedded-opentype'),
-    url('fonts/qtum-icons.ttf?vyas3r') format('truetype'),
-    url('fonts/qtum-icons.woff?vyas3r') format('woff'),
-    url('fonts/qtum-icons.svg?vyas3r#qtum-icons') format('svg');
+  font-family: 'htmlcoin-icons';
+  src: url('fonts/htmlcoin-icons.eot?vyas3r');
+  src: url('fonts/htmlcoin-icons.eot?vyas3r#iefix') format('embedded-opentype'),
+    url('fonts/htmlcoin-icons.ttf?vyas3r') format('truetype'),
+    url('fonts/htmlcoin-icons.woff?vyas3r') format('woff'),
+    url('fonts/htmlcoin-icons.svg?vyas3r#htmlcoin-icons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 
-.qtum-icon {
-  font-family: 'qtum-icons' !important;
+.htmlcoin-icon {
+  font-family: 'htmlcoin-icons' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
@@ -21,9 +21,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.qtum-icon--qtum:before {
+.htmlcoin-icon--htmlcoin:before {
   content: "\e906";
 }
-.qtum-icon--discord:before {
+.htmlcoin-icon--discord:before {
   content: "\e90d";
 }

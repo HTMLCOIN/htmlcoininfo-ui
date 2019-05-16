@@ -16,7 +16,7 @@
           <td>
             <AddressLink :address="address" />
           </td>
-          <td class="monospace break-word">{{ balance | qtum(8) }} QTUM</td>
+          <td class="monospace break-word">{{ balance | htmlcoin(8) }} HTMLCOIN</td>
           <td class="monospace">{{ (balance / totalSupply * 100).toFixed(4) + '%' }}</td>
         </tr>
       </tbody>
@@ -27,7 +27,7 @@
 
 <script>
   import Misc from '@/models/misc'
-  import {RequestError} from '@/services/qtuminfo-api'
+  import {RequestError} from '@/services/htmlcoininfo-api'
   import {scrollIntoView} from '@/utils/dom'
 
   export default {

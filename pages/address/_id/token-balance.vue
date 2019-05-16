@@ -36,7 +36,7 @@
               </td>
               <td class="monospace">
                 <div v-for="{token, balance} in data">
-                  {{ balance.replace('-', '') | qrc20(token.decimals) }}
+                  {{ balance.replace('-', '') | hrc20(token.decimals) }}
                   <AddressLink :address="token.address">
                     {{ token.symbol || $t('contract.token.tokens') }}
                   </AddressLink>
@@ -47,7 +47,7 @@
                   <span v-if="amount > 0">+</span>
                   <span v-else-if="amount < 0">-</span>
                   <span v-else>&nbsp;</span>
-                  {{ amount.replace('-', '') | qrc20(token.decimals) }}
+                  {{ amount.replace('-', '') | hrc20(token.decimals) }}
                   <AddressLink :address="token.address">
                     {{ token.symbol || $t('contract.token.tokens') }}
                   </AddressLink>
@@ -64,7 +64,7 @@
               <tr>
                 <td class="monospace">
                   <div v-for="{token, balance} in data">
-                    {{ balance.replace('-', '') | qrc20(token.decimals) }}
+                    {{ balance.replace('-', '') | hrc20(token.decimals) }}
                     <AddressLink :address="token.address">
                       {{ token.symbol || $t('contract.token.tokens') }}
                     </AddressLink>
@@ -75,7 +75,7 @@
                     <span v-if="amount > 0">+</span>
                     <span v-else-if="amount < 0">-</span>
                     <span v-else>&nbsp;</span>
-                    {{ amount.replace('-', '') | qrc20(token.decimals) }}
+                    {{ amount.replace('-', '') | hrc20(token.decimals) }}
                     <AddressLink :address="token.address">
                       {{ token.symbol || $t('contract.token.tokens') }}
                     </AddressLink>
@@ -95,7 +95,7 @@
   import Vue from 'vue'
   import {Responsive} from '@/plugins/mixins'
   import Address from '@/models/address'
-  import {RequestError} from '@/services/qtuminfo-api'
+  import {RequestError} from '@/services/htmlcoininfo-api'
   import {scrollIntoView} from '@/utils/dom'
 
   export default {

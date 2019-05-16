@@ -30,7 +30,7 @@
             <TransactionLink :transaction="input.prevTxId" :clipboard="false">
               <Icon icon="search" />
             </TransactionLink>
-            {{ input.value | qtum(8) }} QTUM
+            {{ input.value | htmlcoin(8) }} HTMLCOIN
           </span>
         </div>
       </template>
@@ -52,7 +52,7 @@
             <TransactionLink v-if="output.spentTxId" :transaction="output.spentTxId" :clipboard="false">
               <Icon icon="search" />
             </TransactionLink>
-            {{ output.value | qtum(8) }} QTUM
+            {{ output.value | htmlcoin(8) }} HTMLCOIN
           </span>
           <span class="is-pulled-right" v-else-if="contractInfo[index]">
             {{ $t('transaction.utxo.contract_' + contractInfo[index].type) }}
@@ -74,7 +74,7 @@
             <TransactionLink v-if="output.spentTxId" :transaction="output.spentTxId" :clipboard="false">
               <Icon icon="search" />
             </TransactionLink>
-            {{ output.value | qtum(8) }} QTUM
+            {{ output.value | htmlcoin(8) }} HTMLCOIN
           </span>
           <span class="is-pulled-right" v-else-if="contractInfo[index]">
             {{ $t('transaction.utxo.contract_' + contractInfo[index].type) }}
@@ -89,7 +89,7 @@
               <span class="key">{{ $t('transaction.utxo.script') }}</span>
               <code class="value" :class="{script: contractInfo[index]}"
                 @click="$set(showByteCode, index, !showByteCode[index])"><!--
-                -->{{ output.scriptPubKey.asm | qtum-script }}<!--
+                -->{{ output.scriptPubKey.asm | htmlcoin-script }}<!--
               --></code>
             </div>
             <template v-if="contractInfo[index]">
@@ -117,19 +117,19 @@
             <AddressLink :address="inputs[0].address" class="is-pulled-left"
               :highlight="highlightAddress" :clipboard="false" />
             <span class="is-pulled-right amount break-word">
-              {{ refundValue | qtum(8) }} QTUM
+              {{ refundValue | htmlcoin(8) }} HTMLCOIN
             </span>
           </div>
         </div>
       </AttributeInjector>
     </template>
-    <template v-for="({token, from, to, amount}, index) in qrc20TokenTransfers">
+    <template v-for="({token, from, to, amount}, index) in hrc20TokenTransfers">
       <div class="column is-full flex-full"></div>
       <AttributeInjector
         class="column collapse token-transfer-list"
         :class="{
           'first-item': index === 0,
-          'last-item': index === qrc20TokenTransfers.length - 1
+          'last-item': index === hrc20TokenTransfers.length - 1
         }">
         <div class="is-clearfix">
           <AddressLink v-if="from" :address="from" class="is-pulled-left" :highlight="highlightAddress" />
@@ -140,7 +140,7 @@
           <div v-if="to" class="is-clearfix">
             <AddressLink :address="to" class="is-pulled-left" :highlight="highlightAddress" />
             <span class="is-pulled-right amount break-word">
-              {{ amount | qrc20(token.decimals) }}
+              {{ amount | hrc20(token.decimals) }}
               <AddressLink :address="token.address" :highlight="highlightAddress">
                 {{ token.symbol || $t('contract.token.tokens') }}
               </AddressLink>
@@ -150,13 +150,13 @@
         </div>
       </AttributeInjector>
     </template>
-    <template v-for="({token, from, to, tokenId}, index) in qrc721TokenTransfers">
+    <template v-for="({token, from, to, tokenId}, index) in hrc721TokenTransfers">
       <div class="column is-full flex-full"></div>
       <AttributeInjector
         class="column collapse token-transfer-list"
         :class="{
           'first-item': index === 0,
-          'last-item': index === qrc721TokenTransfers.length - 1
+          'last-item': index === hrc721TokenTransfers.length - 1
         }">
         <div class="is-clearfix">
           <AddressLink v-if="from" :address="from" class="is-pulled-left" :highlight="highlightAddress" />
@@ -179,10 +179,10 @@
     </template>
     <div class="column is-full has-text-right collapse-bottom" v-if="fees !== '0'">
       <template v-if="fees > 0">
-        {{ $t('transaction.fee') }} <span class="amount fee">{{ fees | qtum }} QTUM</span>
+        {{ $t('transaction.fee') }} <span class="amount fee">{{ fees | htmlcoin }} HTMLCOIN</span>
       </template>
       <template v-else-if="fees < 0">
-        {{ $t('transaction.reward') }} <span class="amount fee">{{ -fees | qtum }} QTUM</span>
+        {{ $t('transaction.reward') }} <span class="amount fee">{{ -fees | htmlcoin }} HTMLCOIN</span>
       </template>
     </div>
   </div>
@@ -227,11 +227,11 @@
           ? 0
           : this.blockchain.height - this.transaction.blockHeight + 1
       },
-      qrc20TokenTransfers() {
-        return this.transaction.qrc20TokenTransfers
+      hrc20TokenTransfers() {
+        return this.transaction.hrc20TokenTransfers
       },
-      qrc721TokenTransfers() {
-        return this.transaction.qrc721TokenTransfers
+      hrc721TokenTransfers() {
+        return this.transaction.hrc721TokenTransfers
       },
       contractInfo() {
         return this.outputs.map(output => {
@@ -293,7 +293,7 @@
       }
     },
     filters: {
-      'qtum-script'(asm) {
+      'htmlcoin-script'(asm) {
         let chunks = asm.split(' ')
         if (['OP_CREATE', 'OP_CALL'].includes(chunks[chunks.length - 1])) {
           chunks[3] = '[byte code]'

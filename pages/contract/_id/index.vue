@@ -16,7 +16,7 @@
   import Vue from 'vue'
   import Contract from '@/models/contract'
   import Transaction from '@/models/transaction'
-  import {RequestError} from '@/services/qtuminfo-api'
+  import {RequestError} from '@/services/htmlcoininfo-api'
   import {scrollIntoView} from '@/utils/dom'
 
   export default {
@@ -28,7 +28,7 @@
       }
     },
     props: {
-      qrc20: {required: true}
+      hrc20: {required: true}
     },
     async asyncData({req, params, query, redirect, error}) {
       try {
@@ -87,8 +87,8 @@
         oldTransaction.refundValue = newTransaction.refundValue
         oldTransaction.fees = newTransaction.fees
         oldTransaction.receipts = newTransaction.receipts
-        oldTransaction.qrc20TokenTransfers = newTransaction.qrc20TokenTransfers
-        oldTransaction.qrc721TokenTransfers = newTransaction.qrc721TokenTransfers
+        oldTransaction.hrc20TokenTransfers = newTransaction.hrc20TokenTransfers
+        oldTransaction.hrc721TokenTransfers = newTransaction.hrc721TokenTransfers
       },
       subscribeTransactions() {
         this.$websocket.on('address/' + this.id + '/transaction', this._onTransaction)

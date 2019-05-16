@@ -44,14 +44,14 @@
         </div>
         <div class="columns" v-if="fees > 0">
           <div class="column info-title">{{ $t('transaction.transaction_fee') }}</div>
-          <div class="column info-value monospace">{{ fees | qtum }} QTUM</div>
+          <div class="column info-value monospace">{{ fees | htmlcoin }} HTMLCOIN</div>
         </div>
 
         <Transaction
           :transaction="{
             id, blockHeight, timestamp,
             inputs, outputs, refundValue, fees,
-            qrc20TokenTransfers, qrc721TokenTransfers
+            hrc20TokenTransfers, hrc721TokenTransfers
           }"
           detailed
           @transaction-change="refresh" />
@@ -112,7 +112,7 @@
 <script>
   import Block from '@/models/block'
   import Transaction from '@/models/transaction'
-  import {RequestError} from '@/services/qtuminfo-api'
+  import {RequestError} from '@/services/htmlcoininfo-api'
 
   export default {
     head() {
@@ -134,8 +134,8 @@
         timestamp: null,
         size: 0,
         receipts: [],
-        qrc20TokenTransfers: [],
-        qrc721TokenTransfers: []
+        hrc20TokenTransfers: [],
+        hrc721TokenTransfers: []
       }
     },
     async asyncData({req, params, error}) {
@@ -154,8 +154,8 @@
           timestamp: transaction.timestamp,
           size: transaction.size,
           receipts: transaction.receipts,
-          qrc20TokenTransfers: transaction.qrc20TokenTransfers,
-          qrc721TokenTransfers: transaction.qrc721TokenTransfers
+          hrc20TokenTransfers: transaction.hrc20TokenTransfers,
+          hrc721TokenTransfers: transaction.hrc721TokenTransfers
         }
       } catch (err) {
         if (err instanceof RequestError) {
@@ -183,8 +183,8 @@
         this.blockHash = transaction.blockHash
         this.timestamp = transaction.timestamp
         this.receipts = transaction.receipts
-        this.qrc20TokenTransfers = transaction.qrc20TokenTransfers
-        this.qrc721TokenTransfers = transaction.qrc721TokenTransfers
+        this.hrc20TokenTransfers = transaction.hrc20TokenTransfers
+        this.hrc721TokenTransfers = transaction.hrc721TokenTransfers
       },
       splitData(data) {
         let chunks = data.length / 64

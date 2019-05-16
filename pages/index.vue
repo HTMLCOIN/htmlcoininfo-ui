@@ -18,11 +18,11 @@
             </p>
             <p class="information">
               <span class="key">{{ $t('blockchain.network_weight') }}</span>:
-              <span class="value">{{ netStakeWeight | qtum(8) }}</span>
+              <span class="value">{{ netStakeWeight | htmlcoin(8) }}</span>
             </p>
             <p class="information">
               <span class="key">{{ $t('blockchain.fee_rate') }}</span>:
-              <span class="value">{{ feeRate }} QTUM/kB</span>
+              <span class="value">{{ feeRate }} HTMLCOIN/kB</span>
             </p>
           </div>
         </div>
@@ -39,16 +39,16 @@
             <h3 class="card-header-title">
               {{ $tc('blockchain.block', 2) }}
             </h3>
-            <nuxt-link to="/block" class="card-header-button button is-qtum is-outlined">
+            <nuxt-link to="/block" class="card-header-button button is-htmlcoin is-outlined">
               {{ $t('action.view_all') }}
             </nuxt-link>
           </div>
           <div class="card-body">
-            <div v-for="block in recentBlocks" class="qtum-block is-size-7" :key="block.hash">
+            <div v-for="block in recentBlocks" class="htmlcoin-block is-size-7" :key="block.hash">
               <div class="level">
                 <div class="level-left">
                   <nuxt-link :to="{name: 'block-id', params: {id: block.height}}"
-                    class="level-item qtum-block-box has-text-centered">
+                    class="level-item htmlcoin-block-box has-text-centered">
                     {{ $tc('blockchain.block', 1) }} #{{ block.height }}
                     <FromNow :timestamp="block.timestamp" />
                   </nuxt-link>
@@ -61,7 +61,7 @@
                       {{ $t('block.brief.transaction', [block.transactionCount, block.interval]) }}
                       <br>
                       <span class="monospace">
-                        {{ $t('block.brief.reward') }} {{ block.reward | qtum }} QTUM
+                        {{ $t('block.brief.reward') }} {{ block.reward | htmlcoin }} HTMLCOIN
                       </span>
                     </div>
                   </div>
@@ -86,7 +86,7 @@
             <div v-for="transaction in recentTransactions" :key="transaction.id" class="is-size-7 transaction">
               <div class="level">
                 <TransactionLink :transaction="transaction.id" class="level-left" />
-                <span class="level-right">{{ transaction.outputValue | qtum }} QTUM</span>
+                <span class="level-right">{{ transaction.outputValue | htmlcoin }} HTMLCOIN</span>
               </div>
             </div>
           </div>
@@ -100,12 +100,12 @@
   import Block from "@/models/block"
   import Transaction from "@/models/transaction"
   import Misc from '@/models/misc'
-  import {RequestError} from '@/services/qtuminfo-api'
+  import {RequestError} from '@/services/htmlcoininfo-api'
 
   export default {
     head() {
       return {
-        title: 'qtum.info',
+        title: 'htmlcoin.info',
         titleTemplate: null
       }
     },
@@ -187,7 +187,7 @@
     margin: 0;
   }
 
-  .qtum-block {
+  .htmlcoin-block {
     padding: 1em;
     border-top: 1px solid #eee;
     &:first-child {
@@ -195,14 +195,14 @@
     }
   }
 
-  .qtum-block-box {
+  .htmlcoin-block-box {
     flex-direction: column;
     min-width: 11em;
     padding: 1em;
     background-color: #eee;
     color: inherit;
     &:hover {
-      outline: 1px solid @qtum;
+      outline: 1px solid @htmlcoin;
     }
   }
 
