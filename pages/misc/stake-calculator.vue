@@ -42,7 +42,7 @@
       <label>{{ $t('misc.stake_calculator.yearly_roi') }}</label>
       <div class="control">
         <output class="monospace">
-          {{ (reward * 365 * 600 / this.netStakeWeight * 100).toFixed(2) }}%
+          {{ (reward * 365 * 675 / this.netStakeWeight * 100).toFixed(2) }}%
         </output>
       </div>
     </div>
@@ -88,7 +88,9 @@
         return Math.round(Number(this.weightInput.replace(',')) * 1e8) || 0
       },
       expectedTime() {
-        return 144 * this.netStakeWeight / this.weight
+        const n = 8
+        let p = 1 - Math.exp(-this.weight / (n * this.netStakeWeight))
+        return n * 16 * (1 / n - p * p) / (p - p * p)
       },
       interval() {
         if (this.expectedTime < 60) {
@@ -117,8 +119,8 @@
         let addresses = this.address.split(',')
         try {
           if (addresses.every(toHexAddress)) {
-            let {mature} = await Address.get(this.address)
-            this.weightInput = (mature / 1e8).toFixed(8)
+            let {balance} = await Address.get(this.address)
+            this.weightInput = (balance / 1e8).toFixed(8)
           } else {
             this.weightInput = ''
           }
@@ -129,20 +131,17 @@
         }
       }
     },
+    methods: {
+      onStakeWeight(stakeWeight) {
+        this.netStakeWeight = stakeWeight
+      }
+    },
     mounted() {
-      this.$interval = setInterval(async () => {
-        try {
-          let {netStakeWeight} = await Misc.info({ip: req && req.ip})
-          this.netStakeWeight = netStakeWeight
-        } catch (err) {
-          if (!(err instanceof RequestError)) {
-            throw err
-          }
-        }
-      }, 10 * 60 * 1000)
+      this._onStakeWeight = this.onStakeWeight.bind(this)
+      this.$subscribe('blockchain', 'stakeweight', this._onStakeWeight)
     },
     beforeDestroy() {
-      clearInterval(this.$interval)
+      this.$unsubscribe('blockchain', 'stakeweight', this._onStakeWeight)
     }
   }
 </script>

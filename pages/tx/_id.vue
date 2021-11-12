@@ -51,6 +51,7 @@
           :transaction="{
             id, blockHeight, timestamp,
             inputs, outputs, refundValue, fees,
+            contractSpends,
             hrc20TokenTransfers, hrc721TokenTransfers
           }"
           detailed
@@ -60,18 +61,24 @@
           <div class="column">
             <div v-for="receipt in receipts" class="receipt-item">
               <div class="columns">
-                <div class="column info-title">{{ $t('transaction.receipt.gas_used') }}</div>
-                <div class="column info-value monospace">{{ receipt.gasUsed.toLocaleString() }}</div>
+                <div class="column info-title">{{ $t('transaction.receipt.sender') }}</div>
+                <div class="column info-value">
+                  <AddressLink :address="receipt.sender" />
+                </div>
               </div>
-              <div class="columns" v-if="receipt.contractAddress !== '0'.repeat(40)">
+              <div class="columns" v-if="receipt.contractAddressHex !== '0'.repeat(40)">
                 <div class="column info-title">{{ $t('transaction.receipt.contract_address') }}</div>
                 <div class="column info-value">
                   <AddressLink :address="receipt.contractAddress" />
                 </div>
               </div>
-              <div class="columns" v-if="receipt.excepted !== 'None'">
+              <div class="columns" v-if="receipt.gasUsed !== 0">
+                <div class="column info-title">{{ $t('transaction.receipt.gas_used') }}</div>
+                <div class="column info-value monospace">{{ receipt.gasUsed.toLocaleString() }}</div>
+              </div>
+              <div class="columns" v-if="receipt.excepted && receipt.excepted !== 'None'">
                 <div class="column info-title">{{ $t('transaction.receipt.excepted') }}</div>
-                <div class="column info-value">{{ receipt.excepted }}</div>
+                <div class="column info-value">{{ receipt.exceptedMessage || receipt.excepted }}</div>
               </div>
               <div class="columns" v-if="receipt.logs.length">
                 <div class="column info-title">{{ $t('transaction.receipt.event_logs') }}</div>
@@ -133,9 +140,9 @@
         blockHash: null,
         timestamp: null,
         size: 0,
-        receipts: [],
+        contractSpends: [],
         hrc20TokenTransfers: [],
-        hrc721TokenTransfers: []
+        hrc721TokenTransfers: [],
       }
     },
     async asyncData({req, params, error}) {
@@ -153,14 +160,14 @@
           blockHash: transaction.blockHash,
           timestamp: transaction.timestamp,
           size: transaction.size,
-          receipts: transaction.receipts,
+          contractSpends: transaction.contractSpends,
           hrc20TokenTransfers: transaction.hrc20TokenTransfers,
           hrc721TokenTransfers: transaction.hrc721TokenTransfers
         }
       } catch (err) {
         if (err instanceof RequestError) {
           if (err.code === 404) {
-            error({statusCode: 404, message: `Transaction ${param.id} not found`})
+            error({statusCode: 404, message: `Transaction ${params.id} not found`})
           } else {
             error({statusCode: err.code, message: err.message})
           }
@@ -175,14 +182,20 @@
       },
       confirmations() {
         return this.blockHeight == null ? 0 : this.blockchain.height - this.blockHeight + 1
+      },
+      receipts() {
+        return this.outputs.map(output => output.receipt).filter(Boolean)
       }
     },
     methods: {
       refresh(transaction) {
+        this.outputs = transaction.outputs
         this.blockHeight = transaction.blockHeight
         this.blockHash = transaction.blockHash
         this.timestamp = transaction.timestamp
-        this.receipts = transaction.receipts
+        this.fees = transaction.fees
+        this.refundValue = transaction.refundValue
+        this.contractSpends = transaction.contractSpends
         this.hrc20TokenTransfers = transaction.hrc20TokenTransfers
         this.hrc721TokenTransfers = transaction.hrc721TokenTransfers
       },

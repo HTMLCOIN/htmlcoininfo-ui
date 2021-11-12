@@ -7,9 +7,6 @@
       <div class="chart" ref="block-interval"></div>
     </div>
     <div class="chart-wrapper">
-      <div class="chart" ref="coinstake"></div>
-    </div>
-    <div class="chart-wrapper">
       <div class="chart" ref="address-growth"></div>
     </div>
   </section>
@@ -29,19 +26,17 @@
       return {
         dailyTransactions: [],
         blockInterval: [],
-        coinstakeList: [],
         addressGrowth: []
       }
     },
     async asyncData({req, error}) {
       try {
-        let [dailyTransactions, blockInterval, coinstakeList, addressGrowth] = await Promise.all([
+        let [dailyTransactions, blockInterval, addressGrowth] = await Promise.all([
           Misc.dailyTransactions({ip: req && req.ip}),
           Misc.blockInterval({ip: req && req.ip}),
-          Misc.coinstake({ip: req && req.ip}),
           Misc.addressGrowth({ip: req && req.ip})
         ])
-        return {dailyTransactions, blockInterval, coinstakeList, addressGrowth}
+        return {dailyTransactions, blockInterval, addressGrowth}
       } catch (err) {
         if (err instanceof RequestError) {
           error({statusCode: err.code, message: err.message})
@@ -120,62 +115,15 @@
             name: this.$t('misc.stats.blocks'),
             minInterval: 1
           },
-          series: [
-            {
-              type: 'bar',
-              name: this.$t('misc.stats.blocks'),
-              symbol: 'none',
-              itemStyle: {color: 'rgba(46, 154, 208, 1)'},
-              lineStyle: {color: 'rgba(46, 154, 208, 1)'},
-              data: this.blockInterval.map(({interval, count}) => [interval, count])
-            },
-            {
-              type: 'line',
-              name: this.$t('misc.stats.expected_value'),
-              smooth: 1,
-              symbol: 'none',
-              data: [...Array(maxInterval).keys()].map((_, index) => [
-                (index + 1) * 16,
-                Math.round(total / 9 * (8 / 9) ** index)
-              ])
-            }
-          ],
-          dataZoom: {type: 'slider', endValue: 600}
-        })
-      },
-      async renderCoinstakeChart() {
-        const [echarts] = await Promise.all([
-          import('echarts/lib/echarts'),
-          import('echarts/lib/chart/line'),
-          import('echarts/lib/component/title')
-        ])
-        let chart = echarts.init(this.$refs.coinstake)
-        chart.setOption({
-          title: {text: this.$t('misc.stats.coinstake_distribution')},
-          xAxis: {
-            type: 'log',
-            name: this.$t('misc.stats.coins'),
-            min: 0.1, max: 1e6
-          },
-          yAxis: {type: 'log', name: this.$t('misc.stats.blocks_mined')},
           series: {
-            type: 'line',
-            name: 'Blocks Mined',
+            type: 'bar',
+            name: this.$t('misc.stats.blocks'),
             symbol: 'none',
             itemStyle: {color: 'rgba(46, 154, 208, 1)'},
             lineStyle: {color: 'rgba(46, 154, 208, 1)'},
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0, y: 0, x2: 0, y2: 1,
-                colorStops: [
-                  {offset: 0, color: 'rgba(46, 154, 208, 0.8)'},
-                  {offset: 1, color: 'rgba(46, 154, 208, 0.2)'}
-                ]
-              }
-            },
-            data: this.coinstakeList.filter(({count}) => count).map(({minimum, maximum, count}) => [minimum, count])
-          }
+            data: this.blockInterval.map(({interval, count}) => [interval, count])
+          },
+          dataZoom: {type: 'slider', endValue: 600}
         })
       },
       async renderAddressGrowth() {
@@ -209,7 +157,6 @@
     mounted() {
       this.renderDailyTransactionsChart()
       this.renderBlockIntervalChart()
-      this.renderCoinstakeChart()
       this.renderAddressGrowth()
     }
   }

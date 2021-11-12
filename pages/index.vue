@@ -17,8 +17,12 @@
               <span class="value">{{ blockchain.height.toLocaleString() }}</span>
             </p>
             <p class="information">
+              <span class="key">{{ $t('blockchain.current_difficulty') }}</span>:
+              <span class="value">{{ difficulty.toLocaleString() }}</span>
+            </p>
+            <p class="information">
               <span class="key">{{ $t('blockchain.network_weight') }}</span>:
-              <span class="value">{{ netStakeWeight | htmlcoin(8) }}</span>
+              <span class="value">{{ stakeWeight | htmlcoin(8) }}</span>
             </p>
             <p class="information">
               <span class="key">{{ $t('blockchain.fee_rate') }}</span>:
@@ -113,18 +117,20 @@
       return {
         recentBlocks: [],
         recentTransactions: [],
-        netStakeWeight: 0,
+        difficulty: 0,
+        stakeWeight: 0,
         feeRate: 0
       }
     },
-    async asyncData({req, error}) {
+    async asyncData({store, req, error}) {
       try {
-        let [recentBlocks, recentTransactions, {netStakeWeight, feeRate}] = await Promise.all([
+        let [currentBlock, recentBlocks, recentTransactions, {netStakeWeight: stakeWeight, feeRate}] = await Promise.all([
+          Block.get(store.state.blockchain.height),
           Block.getRecentBlocks({ip: req && req.ip}),
           Transaction.getRecentTransactions({ip: req && req.ip}),
           Misc.info({ip: req && req.ip})
         ])
-        return {recentBlocks, recentTransactions, netStakeWeight, feeRate}
+        return {difficulty: currentBlock.difficulty, recentBlocks, recentTransactions, stakeWeight, feeRate}
       } catch (err) {
         if (err instanceof RequestError) {
           error({statusCode: err.code, message: err.message})
@@ -139,43 +145,52 @@
       }
     },
     methods: {
-      async onBlock(block) {
-        if (block.height === this.recentBlocks[0].height + 1) {
-          block.transactionCount = block.transactions.length
-          this.recentBlocks.unshift(block)
-          this.recentBlocks.pop()
-        } else {
-          this.recentBlocks = await Block.getRecentBlocks()
-        }
-      },
       onMempoolTransaction(transaction) {
         this.recentTransactions.unshift(transaction)
         if (this.recentTransactions.length > 27) {
           this.recentTransactions.pop()
         }
+      },
+      onStakeWeight(stakeWeight) {
+        this.stakeWeight = stakeWeight
+      },
+      onFeeRate(feeRate) {
+        this.feeRate = feeRate
+      }
+    },
+    watch: {
+      async 'blockchain.height'(height) {
+        let block = await Block.get(height)
+        this.difficulty = block.difficulty
+        if (height === this.recentBlocks[0].height + 1) {
+          this.recentBlocks.unshift({
+            hash: block.hash,
+            height: block.height,
+            timestamp: block.timestamp,
+            interval: block.interval,
+            size: block.size,
+            transactionCount: block.transactions.length,
+            miner: block.miner,
+            reward: block.reward
+          })
+          this.recentBlocks.pop()
+        } else {
+          this.recentBlocks = await Block.getRecentBlocks()
+        }
       }
     },
     mounted() {
-      this._onBlock = this.onBlock.bind(this)
       this._onMempoolTransaction = this.onMempoolTransaction.bind(this)
-      this.$websocket.on('block', this._onBlock)
-      this.$websocket.on('mempool/transaction', this._onMempoolTransaction)
-      this.$interval = setInterval(async () => {
-        try {
-          let {netStakeWeight, feeRate} = await Misc.info()
-          this.netStakeWeight = netStakeWeight
-          this.feeRate = feeRate
-        } catch (err) {
-          if (!(err instanceof RequestError)) {
-            throw err
-          }
-        }
-      }, 10 * 60 * 1000)
+      this._onStakeWeight = this.onStakeWeight.bind(this)
+      this._onFeeRate = this.onFeeRate.bind(this)
+      this.$subscribe('mempool', 'mempool/transaction', this._onMempoolTransaction)
+      this.$subscribe('blockchain', 'stakeweight', this._onStakeWeight)
+      this.$subscribe('blockchain', 'feerate', this._onFeeRate)
     },
     beforeDestroy() {
-      this.$websocket.off('block', this._onBlock)
-      this.$websocket.off('mempool/transaction', this._onMempoolTransaction)
-      clearInterval(this.$interval)
+      this.$unsubscribe('mempool', 'mempool/transaction', this._onMempoolTransaction)
+      this.$unsubscribe('blockchain', 'stakeweight', this._onStakeWeight)
+      this.$unsubscribe('blockchain', 'feerate', this._onFeeRate)
     }
   }
 </script>
@@ -226,5 +241,17 @@
       border-top: none;
     }
     font-family: monospace;
+    @media (min-width: 769px) {
+      .level-left {
+        flex-shrink: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        margin-right: 1em;
+        a {
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+      }
+    }
   }
 </style>
