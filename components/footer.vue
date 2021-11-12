@@ -27,7 +27,7 @@
         </li>
       </ul>
       <div class="copyright">
-        2019 HTMLCOIN Project
+        2021 Althash
       </div>
     </div>
   </footer>

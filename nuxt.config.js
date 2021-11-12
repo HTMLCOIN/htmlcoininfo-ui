@@ -31,10 +31,10 @@ export default {
       config.plugins.push(new webpack.DefinePlugin({
         'process.env.htmlcoininfoAPIBase': JSON.stringify(process.env.HTMLCOININFO_API_BASE
           || process.env[isServer ? 'HTMLCOININFO_API_BASE_SERVER' : 'HTMLCOININFO_API_BASE_CLIENT']
-          || 'http://localhost:3001/htmlcoininfo-api/'),
+          || 'http://localhost:7001/'),
         'process.env.htmlcoininfoWSBase': JSON.stringify(process.env.HTMLCOININFO_WS_BASE
           || process.env.HTMLCOININFO_API_BASE_WS
-          || '//localhost:3002/htmlcoininfo-ws/'),
+          || '//localhost:7001/'),
         'process.env.network': JSON.stringify(process.env.HTMLCOIN_NETWORK || 'mainnet')
       }))
     },
@@ -45,7 +45,7 @@ export default {
       }
     }
   },
-  serverMiddleware: ['middleware/ip.js'],
+  serverMiddleware: ['~/middleware/ip.js'],
   plugins: [
     '~/plugins/components.js',
     '~/plugins/i18n.js',

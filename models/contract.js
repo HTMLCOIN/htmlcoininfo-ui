@@ -14,11 +14,11 @@ class Contract {
   }
 
   static listTokens({page, pageSize}, options = {}) {
-    return HtmlcoininfoAPI.get(`/contract/hrc20-tokens`, {params: {page, pageSize}, ...options})
+    return HtmlcoininfoAPI.get(`/hrc20`, {params: {page, pageSize}, ...options})
   }
 
   static richList(id, {page, pageSize}, options = {}) {
-    return HtmlcoininfoAPI.get(`/contract/${id}/rich-list`, {params: {page, pageSize}, ...options})
+    return HtmlcoininfoAPI.get(`/hrc20/${id}/rich-list`, {params: {page, pageSize}, ...options})
   }
 }
 

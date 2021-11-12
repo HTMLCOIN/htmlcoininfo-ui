@@ -1,8 +1,11 @@
 <template>
   <div>
-    <form class="select-tokens" @submit.prevent>
-      <label v-for="token in tokens" class="checkbox">
-        <input type="checkbox" :value="token.address" v-model="selectedTokens">
+    <form class="select-token" @submit.prevent>
+      <label class="radio">
+        <input type="radio" value="" v-model="selectedToken"> All
+      </label>
+      <label v-for="token in tokens" class="radio">
+        <input type="radio" :value="token.address" v-model="selectedToken">
         {{ token.name }} ({{ token.symbol }})
       </label>
     </form>
@@ -28,28 +31,28 @@
           </template>
         </thead>
         <tbody>
-          <template v-for="{id, timestamp, data} in transactions">
+          <template v-for="{id, timestamp, tokens} in transactions">
             <tr v-if="responsive.isTablet">
               <td>{{ timestamp | timestamp }}</td>
               <td>
                 <TransactionLink :transaction="id" />
               </td>
               <td class="monospace">
-                <div v-for="{token, balance} in data">
-                  {{ balance.replace('-', '') | hrc20(token.decimals) }}
-                  <AddressLink :address="token.address">
-                    {{ token.symbol || $t('contract.token.tokens') }}
+                <div v-for="{address, name, symbol, decimals, balance} in tokens">
+                  {{ balance.replace('-', '') | hrc20(decimals) }}
+                  <AddressLink :address="address">
+                    {{ symbol || name || $t('contract.token.tokens') }}
                   </AddressLink>
                 </div>
               </td>
               <td class="monospace">
-                <div v-for="{token, amount} in data">
+                <div v-for="{address, name, symbol, decimals, amount} in tokens">
                   <span v-if="amount > 0">+</span>
                   <span v-else-if="amount < 0">-</span>
                   <span v-else>&nbsp;</span>
-                  {{ amount.replace('-', '') | hrc20(token.decimals) }}
-                  <AddressLink :address="token.address">
-                    {{ token.symbol || $t('contract.token.tokens') }}
+                  {{ amount.replace('-', '') | hrc20(decimals) }}
+                  <AddressLink :address="address">
+                    {{ symbol || name || $t('contract.token.tokens') }}
                   </AddressLink>
                 </div>
               </td>
@@ -63,21 +66,21 @@
               </tr>
               <tr>
                 <td class="monospace">
-                  <div v-for="{token, balance} in data">
-                    {{ balance.replace('-', '') | hrc20(token.decimals) }}
-                    <AddressLink :address="token.address">
-                      {{ token.symbol || $t('contract.token.tokens') }}
+                  <div v-for="{address, name, symbol, decimals, balance} in tokens">
+                    {{ balance.replace('-', '') | hrc20(decimals) }}
+                    <AddressLink :address="address">
+                      {{ symbol || name || $t('contract.token.tokens') }}
                     </AddressLink>
                   </div>
                 </td>
                 <td class="monospace">
-                  <div v-for="{token, amount} in data">
+                  <div v-for="{address, name, symbol, decimals, amount} in tokens">
                     <span v-if="amount > 0">+</span>
                     <span v-else-if="amount < 0">-</span>
                     <span v-else>&nbsp;</span>
-                    {{ amount.replace('-', '') | hrc20(token.decimals) }}
-                    <AddressLink :address="token.address">
-                      {{ token.symbol || $t('contract.token.tokens') }}
+                    {{ amount.replace('-', '') | hrc20(decimals) }}
+                    <AddressLink :address="address">
+                      {{ symbol || name || $t('contract.token.tokens') }}
                     </AddressLink>
                   </div>
                 </td>
@@ -105,7 +108,7 @@
         totalCount: 0,
         transactions: [],
         currentPage: Number(this.$route.query.page || 1),
-        selectedTokens: this.tokens.map(token => token.address)
+        selectedToken: ''
       }
     },
     props: {
@@ -125,7 +128,7 @@
         if (page > 1 && totalCount <= (page - 1) * 100) {
           redirect(`/address/${params.id}/token-balance`, {page: Math.ceil(totalCount / 100)})
         }
-        return {totalCount, transactions, ...(query.tokens ? {selectedTokens: query.tokens.split(',')} : {})}
+        return {totalCount, transactions, ...(query.token ? {selectedtoken: query.token.split(',')} : {})}
       } catch (err) {
         if (err instanceof RequestError) {
           error({statusCode: err.code, message: err.message})
@@ -149,40 +152,40 @@
           params: {id: this.id},
           query: {
             page,
-            tokens: this.selectedTokens.join(',')
+            ...this.selectedToken ? {token: this.selectedToken} : {}
           }
         }
       }
     },
     watch: {
-      selectedTokens(value, oldValue) {
+      selectedToken(value, oldValue) {
         this.$router.push({
           name: 'address-id-token-balance',
           params: {id: this.id},
-          ...(this.selectedTokens.length ? {query: {tokens: this.selectedTokens.join(',')}} : {})
+          ...(this.selectedToken ? {query: {token: this.selectedToken}} : {})
         })
       }
     },
     async beforeRouteUpdate(to, from, next) {
       let page = Number(to.query.page || 1)
-      let tokens = to.query.tokens
+      let token = to.query.token
       let {totalCount, transactions} = await Address.getTokenBalanceTransactions(
         this.id,
-        {page: page - 1, pageIndex: 100, tokens}
+        {page: page - 1, pageIndex: 100, token}
       )
       this.totalCount = totalCount
       if (page > this.pages && this.pages > 1) {
         this.$router.push({
           name: 'address-id-token-balance',
           params: {id: this.id},
-          query: {page: Math.ceil(totalCount / 100), ...(tokens ? {tokens} : {})}
+          query: {page: Math.ceil(totalCount / 100), ...(token ? {token} : {})}
         })
         return
       }
       this.transactions = transactions
       this.currentPage = page
-      if (!tokens) {
-        this.selectedTokens = this.tokens.map(token => token.address)
+      if (!token) {
+        this.selectedToken = ''
       }
       next()
       scrollIntoView(this.$refs.list)
@@ -192,11 +195,11 @@
 </script>
 
 <style lang="less" scoped>
-  .select-tokens {
+  .select-token {
     display: flex;
     flex-flow: wrap;
     margin-bottom: 1em;
-    .checkbox {
+    .radio {
       margin-right: 1em;
     }
   }

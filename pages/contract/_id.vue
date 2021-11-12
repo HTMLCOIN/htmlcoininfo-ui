@@ -11,23 +11,9 @@
         <div class="columns">
           <div class="column info-title">{{ $t('contract.address') }}</div>
           <div class="column info-value">
-            <AddressLink :address="id" plain />
+            <AddressLink :address="address" plain />
           </div>
         </div>
-        <template v-if="owner">
-          <div class="columns">
-            <div class="column info-title">{{ $t('contract.owner') }}</div>
-            <div class="column info-value">
-              <AddressLink :address="owner" />
-            </div>
-          </div>
-          <div class="columns">
-            <div class="column info-title">{{ $t('contract.create_transaction') }}</div>
-            <div class="column info-value">
-              <TransactionLink :transaction="createTransactionId" />
-            </div>
-          </div>
-        </template>
         <template v-if="hrc20">
           <div class="columns" v-if="hrc20.name">
             <div class="column info-title">{{ $t('contract.token.name') }}</div>
@@ -76,19 +62,19 @@
             <div v-for="token in existingTokenBalances" class="monospace">
               {{ token.balance | hrc20(token.decimals) }}
               <AddressLink :address="token.address">
-                {{ token.symbol || $t('contract.token.tokens') }}
+                {{ token.symbol || token.name || $t('contract.token.tokens') }}
               </AddressLink>
             </div>
           </div>
         </div>
         <div class="columns">
           <div class="column info-title">{{ $t('contract.transaction_count') }}</div>
-          <div class="column info-value">{{ totalCount }}</div>
+          <div class="column info-value">{{ transactionCount }}</div>
         </div>
       </div>
     </div>
 
-    <div v-if="totalCount" class="tabs is-centered">
+    <div v-if="transactionCount" class="tabs is-centered">
       <ul>
         <li :class="{'is-active': $route.matched.some(route => route.name === 'contract-id')}">
           <nuxt-link :to="{name: 'contract-id', params: {id}}">
@@ -120,32 +106,34 @@
     },
     data() {
       return {
-        createTransactionId: '',
-        owner: '',
+        address: '',
+        addressHex: '',
+        vm: '',
         type: '',
         hrc20: null,
         hrc721: null,
         balance: '0',
         totalReceived: '0',
         totalSent: '0',
-        hrc20TokenBalances: [],
-        totalCount: 0
+        hrc20Balances: [],
+        transactionCount: 0
       }
     },
     async asyncData({req, params, query, redirect, error}) {
       try {
         let contract = await Contract.get(params.id)
         return {
-          createTransactionId: contract.createTransactionId,
-          owner: contract.owner,
+          address: contract.address,
+          addressHex: contract.addressHex,
+          vm: contract.vm,
           type: contract.type,
           hrc20: contract.hrc20,
           hrc721: contract.hrc721,
           balance: contract.balance,
           totalReceived: contract.totalReceived,
           totalSent: contract.totalSent,
-          hrc20TokenBalances: contract.hrc20TokenBalances,
-          totalCount: contract.totalCount
+          hrc20Balances: contract.hrc20Balances,
+          transactionCount: contract.transactionCount
         }
       } catch (err) {
         if (err instanceof RequestError) {
@@ -164,10 +152,10 @@
         return this.$route.params.id
       },
       pages() {
-        return Math.ceil(this.totalCount / 20)
+        return Math.ceil(this.transactionCount / 20)
       },
       existingTokenBalances() {
-        return this.hrc20TokenBalances.filter(token => token.balance !== '0')
+        return this.hrc20Balances.filter(token => token.balance !== '0')
       }
     }
   }

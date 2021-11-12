@@ -28,6 +28,9 @@
               <nuxt-link to="/misc/stake-calculator" class="navbar-item">
                 {{ $t('misc.stake_calculator.title') }}
               </nuxt-link>
+              <nuxt-link to="/misc/raw-tx" class="navbar-item">
+                Send Raw Transaction
+              </nuxt-link>
             </div>
           </div>
         </AttributeInjector>
@@ -63,7 +66,7 @@
         }
         this.searching = true
         try {
-          let {type, id} = await htmlcoininfoGet(`/search/${searchString}`)
+          let {type, id, address} = await htmlcoininfoGet(`/search`, {params: {query: searchString}})
           switch (type) {
           case 'address':
             this.searchString = ''
@@ -74,9 +77,11 @@
             this.$router.push(`/block/${searchString}`)
             break
           case 'contract':
+          case 'hrc20':
+          case 'hrc721':
             this.searchString = ''
-            if (id) {
-              this.$router.push(`/contract/${id}`)
+            if (address) {
+              this.$router.push(`/contract/${address}`)
             } else {
               this.$router.push(`/contract/${searchString}`)
             }

@@ -28,6 +28,10 @@ class Transaction {
   static getRecentTransactions(options = {}) {
     return HtmlcoininfoAPI.get('/recent-txs', options)
   }
+
+  static sendRawTransaction(data, options = {}) {
+    return HtmlcoininfoAPI.post('/tx/send', {rawtx: data}, options)
+  }
 }
 
 export default Transaction

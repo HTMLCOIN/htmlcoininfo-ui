@@ -20,18 +20,53 @@
       </div>
     </div>
     <div class="column is-clearfix collapse">
-      <template v-if="inputs[0].coinbase">{{ $t('transaction.coinbase_input') }}</template>
+      <template v-if="collapsed">
+        <div v-for="input in inputs" class="is-clearfix">
+          <span v-if="input.coinbase" class="is-pulled-left">{{ $t('transaction.coinbase_input') }}</span>
+          <template v-else>
+            <AddressLink v-if="input.address" :address="input.address" class="is-pulled-left"
+              :plain="input.isInvalidContract" :highlight="highlightAddress" :clipboard="false" />
+            <span v-else class="is-pulled-left">{{ $t('transaction.unparsed_address' )}}</span>
+            <span class="is-pulled-right amount">
+              <TransactionLink :transaction="input.prevTxId" :clipboard="false">
+                <Icon icon="search" />
+              </TransactionLink>
+              {{ input.value | htmlcoin(8) }} HTMLCOIN
+            </span>
+          </template>
+        </div>
+      </template>
       <template v-else>
         <div v-for="input in inputs" class="is-clearfix">
-          <AddressLink v-if="input.address" :address="input.address" class="is-pulled-left"
-            :plain="input.isInvalidContract" :highlight="highlightAddress" :clipboard="false" />
-          <span v-else class="is-pulled-left">{{ $t('transaction.unparsed_address' )}}</span>
-          <span class="is-pulled-right amount">
-            <TransactionLink :transaction="input.prevTxId" :clipboard="false">
-              <Icon icon="search" />
-            </TransactionLink>
-            {{ input.value | htmlcoin(8) }} HTMLCOIN
-          </span>
+          <span v-if="input.coinbase" class="is-pulled-left">{{ $t('transaction.coinbase_input') }}</span>
+          <template v-else>
+            <AddressLink v-if="input.address" :address="input.address" class="is-pulled-left"
+              :plain="input.isInvalidContract" :highlight="highlightAddress" :clipboard="false" />
+            <span v-else class="is-pulled-left">{{ $t('transaction.unparsed_address' )}}</span>
+            <span class="is-pulled-right amount">
+              <TransactionLink :transaction="input.prevTxId" :clipboard="false">
+                <Icon icon="search" />
+              </TransactionLink>
+              {{ input.value | htmlcoin(8) }} HTMLCOIN
+            </span>
+          </template>
+          <div class="is-clearfix"></div>
+          <div class="script">
+            <div>
+              <span class="key">{{ $t('transaction.script.type') }}</span>
+              <span class="value">{{ input.scriptSig.type }}</span>
+            </div>
+            <div v-if="input.scriptSig.asm">
+              <span class="key">{{ $t('transaction.script.script') }}</span>
+              <code class="value"><!--
+                -->{{ input.scriptSig.asm | htmlcoin-script }}<!--
+              --></code>
+            </div>
+            <div v-for="witness in input.witness || []">
+              <span class="key">{{ $t('transaction.script.witness') }}</span>
+              <code class="value">{{ witness }}</code>
+            </div>
+          </div>
         </div>
       </template>
     </div>
@@ -41,7 +76,7 @@
         <div v-for="(output, index) in outputs" class="is-clearfix">
           <AddressLink v-if="output.address" :address="output.address" class="is-pulled-left"
             :plain="output.isInvalidContract" :highlight="highlightAddress" :clipboard="false" />
-          <span v-else-if="output.scriptPubKey.type === 'nonstandard'">
+          <span v-else-if="output.scriptPubKey.type === 'empty'">
             {{ $t('transaction.empty_output') }}
           </span>
           <span v-else-if="output.scriptPubKey.type === 'nulldata'">
@@ -55,7 +90,7 @@
             {{ output.value | htmlcoin(8) }} HTMLCOIN
           </span>
           <span class="is-pulled-right" v-else-if="contractInfo[index]">
-            {{ $t('transaction.utxo.contract_' + contractInfo[index].type) }}
+            {{ $t('transaction.script.contract_' + contractInfo[index].type) }}
           </span>
         </div>
       </template>
@@ -63,7 +98,7 @@
         <div v-for="(output, index) in outputs" class="is-clearfix">
           <AddressLink v-if="output.address" :address="output.address" class="is-pulled-left"
             :plain="output.isInvalidContract" :highlight="highlightAddress" :clipboard="false" />
-          <span v-else-if="output.scriptPubKey.type === 'nonstandard'">
+          <span v-else-if="output.scriptPubKey.type === 'empty'">
             {{ $t('transaction.empty_output') }}
           </span>
           <span v-else-if="output.scriptPubKey.type === 'nulldata'">
@@ -77,24 +112,25 @@
             {{ output.value | htmlcoin(8) }} HTMLCOIN
           </span>
           <span class="is-pulled-right" v-else-if="contractInfo[index]">
-            {{ $t('transaction.utxo.contract_' + contractInfo[index].type) }}
+            {{ $t('transaction.script.contract_' + contractInfo[index].type) }}
           </span>
+          <span class="is-pulled-right" v-else-if="!['nonstandard', 'nulldata'].includes(output.scriptPubKey.type)"></span>
           <div class="is-clearfix"></div>
-          <div class="output-script">
+          <div class="script">
             <div>
-              <span class="key">{{ $t('transaction.utxo.type') }}</span>
+              <span class="key">{{ $t('transaction.script.type') }}</span>
               <span class="value">{{ output.scriptPubKey.type }}</span>
             </div>
             <div v-if="output.scriptPubKey.asm">
-              <span class="key">{{ $t('transaction.utxo.script') }}</span>
-              <code class="value" :class="{script: contractInfo[index]}"
+              <span class="key">{{ $t('transaction.script.script') }}</span>
+              <code class="value" :class="{'script-code': contractInfo[index]}"
                 @click="$set(showByteCode, index, !showByteCode[index])"><!--
                 -->{{ output.scriptPubKey.asm | htmlcoin-script }}<!--
               --></code>
             </div>
             <template v-if="contractInfo[index]">
               <div v-show="showByteCode[index]">
-                <span class="key">{{ $t('transaction.utxo.code') }}</span>
+                <span class="key">{{ $t('transaction.script.code') }}</span>
                 <code class="value break-word">{{ contractInfo[index].code }}</code>
               </div>
               <template v-if="contractInfo[index].type === 'call' && output.abiList && output.abiList.length">
@@ -123,7 +159,27 @@
         </div>
       </AttributeInjector>
     </template>
-    <template v-for="({token, from, to, amount}, index) in hrc20TokenTransfers">
+    <template v-for="{inputs, outputs} in contractSpends">
+      <div class="column is-full flex-full"></div>
+      <div class="column is-clearfix collapse">
+        <div v-for="input in inputs" class="is-clearfix">
+          <AddressLink :address="input.address" class="is-pulled-left" :highlight="highlightAddress" :clipboard="false" />
+          <span class="is-pulled-right amount">
+            {{ input.value | htmlcoin(8) }} HTMLCOIN
+          </span>
+        </div>
+      </div>
+      <Icon icon="arrow-right" class="column arrow collapse" />
+      <div class="column is-half collapse">
+        <div v-for="output in outputs" class="is-clearfix">
+          <AddressLink :address="output.address" class="is-pulled-left" :highlight="highlightAddress" :clipboard="false" />
+          <span class="is-pulled-right amount">
+            {{ output.value | htmlcoin(8) }} HTMLCOIN
+          </span>
+        </div>
+      </div>
+    </template>
+    <template v-for="({address, name, symbol, decimals, from, to, value}, index) in hrc20TokenTransfers">
       <div class="column is-full flex-full"></div>
       <AttributeInjector
         class="column collapse token-transfer-list"
@@ -140,9 +196,9 @@
           <div v-if="to" class="is-clearfix">
             <AddressLink :address="to" class="is-pulled-left" :highlight="highlightAddress" />
             <span class="is-pulled-right amount break-word">
-              {{ amount | hrc20(token.decimals) }}
-              <AddressLink :address="token.address" :highlight="highlightAddress">
-                {{ token.symbol || $t('contract.token.tokens') }}
+              {{ value | hrc20(decimals) }}
+              <AddressLink :address="address" :highlight="highlightAddress">
+                {{ symbol || name || $t('contract.token.tokens') }}
               </AddressLink>
             </span>
           </div>
@@ -150,7 +206,7 @@
         </div>
       </AttributeInjector>
     </template>
-    <template v-for="({token, from, to, tokenId}, index) in hrc721TokenTransfers">
+    <template v-for="({address, name, symbol, from, to, tokenId}, index) in hrc721TokenTransfers">
       <div class="column is-full flex-full"></div>
       <AttributeInjector
         class="column collapse token-transfer-list"
@@ -167,10 +223,10 @@
           <div v-if="to" class="is-clearfix">
             <AddressLink :address="to" class="is-pulled-left" :highlight="highlightAddress" />
             <span class="is-pulled-right amount break-word">
-              {{ tokenId }}
-              <AddressLink :address="token.address" :highlight="highlightAddress">
-                {{ token.symbol || $t('contract.token.tokens') }}
+              <AddressLink :address="address" :highlight="highlightAddress">
+                {{ symbol || name || $t('contract.token.tokens') }}
               </AddressLink>
+              #0x{{ tokenId.replace(/^0+/, '') || '0' }}
             </span>
           </div>
           <template v-else>{{ $t('contract.token.burn_tokens') }}</template>
@@ -227,6 +283,9 @@
           ? 0
           : this.blockchain.height - this.transaction.blockHeight + 1
       },
+      contractSpends() {
+        return this.transaction.contractSpends
+      },
       hrc20TokenTransfers() {
         return this.transaction.hrc20TokenTransfers
       },
@@ -239,30 +298,54 @@
             let chunks = output.scriptPubKey.asm.split(' ')
             switch (chunks[chunks.length - 1]) {
             case 'OP_CREATE':
-              return {
-                type: 'create',
-                version: chunks[0],
-                gasLimit: chunks[1],
-                gasPrice: chunks[2],
-                code: chunks[3]
+              if (chunks.includes('OP_SENDER')) {
+                return {
+                  type: 'create',
+                  version: chunks[4],
+                  gasLimit: chunks[5],
+                  gasPrice: chunks[6],
+                  code: chunks[7]
+                }
+              } else {
+                return {
+                  type: 'create',
+                  version: chunks[0],
+                  gasLimit: chunks[1],
+                  gasPrice: chunks[2],
+                  code: chunks[3]
+                }
               }
             case 'OP_CALL':
-              return {
-                type: 'call',
-                version: chunks[0],
-                gasLimit: chunks[1],
-                gasPrice: chunks[2],
-                code: chunks[3],
-                address: chunks[4]
+              if (chunks.includes('OP_SENDER')) {
+                return {
+                  type: 'call',
+                  version: chunks[4],
+                  gasLimit: chunks[5],
+                  gasPrice: chunks[6],
+                  code: chunks[7],
+                  address: chunks[8]
+                }
+              } else {
+                return {
+                  type: 'call',
+                  version: chunks[0],
+                  gasLimit: chunks[1],
+                  gasPrice: chunks[2],
+                  code: chunks[3],
+                  address: chunks[4]
+                }
               }
             default:
               return null
             }
           } else {
             switch (output.scriptPubKey.type) {
-            case 'create':
+            case 'evm_create':
+            case 'evm_create_sender':
               return {type: 'create'}
             case 'call':
+            case 'evm_call':
+            case 'evm_call_sender':
               return {type: 'call'}
             default:
               return null
@@ -287,16 +370,21 @@
             + '\n)'
         }
       },
-      onTransaction(transaction) {
-        this.$emit('transaction-change', transaction)
-        this.$websocket.off('transaction/' + this.id, this._onTransaction)
+      async onTransaction(id) {
+        this.$emit('transaction-change', await Transaction.get(id))
+        this.$unsubscribe('transaction/' + this.id, 'transaction/confirm', this._onTransaction)
+        this.$subscribing = false
       }
     },
     filters: {
       'htmlcoin-script'(asm) {
         let chunks = asm.split(' ')
         if (['OP_CREATE', 'OP_CALL'].includes(chunks[chunks.length - 1])) {
-          chunks[3] = '[byte code]'
+          if (chunks.includes('OP_SENDER')) {
+            chunks[7] = '[byte code]'
+          } else {
+            chunks[3] = '[byte code]'
+          }
           return chunks.join(' ')
         } else {
           return asm
@@ -308,10 +396,13 @@
       if (this.transaction.confirmations) {
         return
       }
-      this.$websocket.on('transaction/' + this.id, this._onTransaction)
+      this.$subscribe('transaction/' + this.id, 'transaction/confirm', this._onTransaction)
+      this.$subscribing = true
     },
     beforeDestroy() {
-      this.$websocket.off('transaction/' + this.id, this._onTransaction)
+      if (this.$subscribing) {
+        this.$unsubscribe('transaction/' + this.id, 'transaction/confirm', this._onTransaction)
+      }
     }
   }
 </script>
@@ -392,7 +483,7 @@
     color: white;
   }
 
-  .output-script {
+  .script {
     font-size: 0.8em;
     .key {
       display: inline-block;
@@ -403,7 +494,7 @@
     code {
       word-break: break-all;
     }
-    .script {
+    .script-code {
       cursor: pointer;
     }
     .contract-call-code {

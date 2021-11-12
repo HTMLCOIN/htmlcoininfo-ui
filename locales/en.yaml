@@ -7,6 +7,7 @@ blockchain:
   token: Token | Tokens
   misc: Misc
   blockchain_height: Blockchain Height
+  current_difficulty: Current Difficulty
   network_weight: Network Weight
   fee_rate: Fee Rate
 block:
@@ -55,15 +56,17 @@ transaction:
   fee: Fee
   reward: Reward
   gas_refund: Gas 退款
-  utxo:
+  script:
     type: Type
     script: Script
+    witness: Witness
     code: Code
     contract_create: Contract Create
     contract_call: Contract Call
   receipt:
-    gas_used: Gas Used
+    sender: Sender
     contract_address: Contract Address
+    gas_used: Gas Used
     excepted: Excepted
     event_logs: Event Logs
     address: Address
@@ -103,6 +106,7 @@ contract:
     tokens: Tokens
     mint_tokens: Mint Tokens
     burn_tokens: Burn Tokens
+    token_transactions: Transactions
     token_holders: Token Holders
   balance: Balance
   total_received: Total Received
