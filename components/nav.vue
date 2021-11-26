@@ -2,7 +2,7 @@
   <nav class="navbar">
     <div class="navbar-brand is-size-4">
       <nuxt-link to="/" class="navbar-item navbar-logo">
-        <span class="htmlcoin-icon htmlcoin-icon--htmlcoin" /> htmlcoin.info
+        <span class="htmlcoin-icon htmlcoin-icon--htmlcoin" /> Htmlcoin Block Explorer
       </nuxt-link>
       <button type="button" class="button navbar-burger" @click="showMenu = !showMenu">
         <span></span><span></span><span></span>
