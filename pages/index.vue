@@ -26,7 +26,7 @@
             </p>
             <p class="information">
               <span class="key">{{ $t('blockchain.fee_rate') }}</span>:
-              <span class="value">{{ feeRate }} HTMLCOIN/kB</span>
+              <span class="value">{{ feeRate }} HTML/kB</span>
             </p>
           </div>
         </div>
@@ -65,7 +65,7 @@
                       {{ $t('block.brief.transaction', [block.transactionCount, block.interval]) }}
                       <br>
                       <span class="monospace">
-                        {{ $t('block.brief.reward') }} {{ block.reward | htmlcoin }} HTMLCOIN
+                        {{ $t('block.brief.reward') }} {{ block.reward | htmlcoin }} HTML
                       </span>
                     </div>
                   </div>
@@ -90,7 +90,7 @@
             <div v-for="transaction in recentTransactions" :key="transaction.id" class="is-size-7 transaction">
               <div class="level">
                 <TransactionLink :transaction="transaction.id" class="level-left" />
-                <span class="level-right">{{ transaction.outputValue | htmlcoin }} HTMLCOIN</span>
+                <span class="level-right">{{ transaction.outputValue | htmlcoin }} HTML</span>
               </div>
             </div>
           </div>
@@ -109,7 +109,7 @@
   export default {
     head() {
       return {
-        title: 'htmlcoin.info',
+        title: 'Htmlcoin Block Explorer',
         titleTemplate: null
       }
     },
