@@ -3,31 +3,31 @@
     <div class="container">
       <h3 class="is-size-4 is-uppercase">{{ $t('footer.contact_us') }}</h3>
       <div class="line"></div>
-      <a href="mailto:dev@htmlcoin.com">dev@htmlcoin.com</a>
+      <a href="mailto:help@htmlcoin.team">help@htmlcoin.team</a>
       <ul class="links">
         <li>
-          <a target="_blank" href="https://www.facebook.com/HtmlcoinOfficial/">
+          <a target="_blank" href="https://www.facebook.com/htmlcoin/">
             <Icon icon="facebook" brands /> {{ $t('footer.facebook') }}
           </a>
         </li>
         <li>
-          <a target="_blank" href="https://twitter.com/htmlcoinofficial">
+          <a target="_blank" href="https://twitter.com/HTMLCOIN">
             <Icon icon="twitter" brands /> {{ $t('footer.twitter') }}
           </a>
         </li>
         <li>
-          <a target="_blank" href="https://forum.htmlcoin.com">
+          <a target="_blank" href="https://t.me/officialhtmlcoin">
             <span class="htmlcoin-icon htmlcoin-icon--htmlcoin"></span> {{ $t('footer.forum') }}
           </a>
         </li>
         <li>
-          <a target="_blank" href="https://github.com/HTMLCOIN/htmlcoin">
+          <a target="_blank" href="https://github.com/HTMLCOIN">
             <Icon icon="github" brands /> Github
           </a>
         </li>
       </ul>
       <div class="copyright">
-        2021 Althash
+        2021 The Htmlcoin Foundation
       </div>
     </div>
   </footer>
