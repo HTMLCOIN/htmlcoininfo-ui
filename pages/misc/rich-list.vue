@@ -16,7 +16,7 @@
           <td>
             <AddressLink :address="address" />
           </td>
-          <td class="monospace break-word">{{ balance | htmlcoin(8) }} HTMLCOIN</td>
+          <td class="monospace break-word">{{ balance | htmlcoin(8) }} HTML</td>
           <td class="monospace">{{ (balance / totalSupply * 100).toFixed(4) + '%' }}</td>
         </tr>
       </tbody>
@@ -74,9 +74,9 @@
         if (height <= 5000) {
           return height * 20000
         }
-        let supply = 1e16
-        let reward = 4e8
-        let interval = 985500
+        let supply = 9e10
+        let reward = 1250
+        let interval = 7680000
         height -= 5000
         let halvings = 0
         while (halvings < 7 && height > interval) {
