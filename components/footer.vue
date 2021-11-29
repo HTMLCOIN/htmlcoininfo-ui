@@ -17,7 +17,7 @@
         </li>
         <li>
           <a target="_blank" href="https://t.me/officialhtmlcoin">
-            <span class="htmlcoin-icon htmlcoin-icon--htmlcoin"></span> {{ $t('footer.forum') }}
+            <Icon icon="telegram" brands /> Telegram
           </a>
         </li>
         <li>
@@ -39,7 +39,7 @@
     padding-bottom: 6rem;
     background-color: #1a191e;
     text-align: center;
-    color: white;
+    color: #faede3;
   }
   a:link, a:visited, a:hover, a:active {
     color: inherit;
@@ -48,7 +48,7 @@
     width: 2rem;
     height: 1px;
     margin: 0.5rem auto;
-    background-color: white;
+    background-color: #faede3;
   }
   .links {
     display: flex;
