@@ -74,7 +74,7 @@
         if (height <= 5000) {
           return height * 20000
         }
-        let supply = 9e10
+        let supply = 8e10
         let reward = 1250
         let interval = 7680000
         height -= 5000
