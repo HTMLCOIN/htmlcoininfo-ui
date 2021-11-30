@@ -7,7 +7,6 @@
           <th>{{ $t('misc.ranking') }}</th>
           <th>{{ $t('misc.address') }}</th>
           <th>{{ $t('misc.balance') }}</th>
-          <th>{{ $t('misc.percentage') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -17,7 +16,6 @@
             <AddressLink :address="address" />
           </td>
           <td class="monospace break-word">{{ balance | htmlcoin(8) }} HTML</td>
-          <td class="monospace">{{ (balance / totalSupply / 1000000).toFixed(2) + '%' }}</td>
         </tr>
       </tbody>
     </table>
