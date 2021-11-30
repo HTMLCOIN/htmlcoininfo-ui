@@ -38,14 +38,6 @@
         </div>
       </div>
     </template>
-    <div class="field">
-      <label>{{ $t('misc.stake_calculator.yearly_roi') }}</label>
-      <div class="control">
-        <output class="monospace">
-          {{ (reward * 365 * 675 / this.netStakeWeight * 100).toFixed(2) }}%
-        </output>
-      </div>
-    </div>
   </form>
 </template>
 
