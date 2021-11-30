@@ -48,7 +48,8 @@ block:
     address: Mined by {0}
     transaction: transaction | transactions
     in: in
-    seconds: sec | secs    reward: Block Reward
+    seconds: sec | secs
+    reward: Block Reward
   list:
     block_list: Blocks
     height: Block Height
