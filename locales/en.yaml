@@ -1,10 +1,10 @@
 descriptions:
-  index: BCSChain.info is the official blockchain explorer of BCSChain. Search transactions, addresses, blocks, smart-contracts, tokens.
+  index: Htmlcoin Block Explorer is a blockchain explorer of Htmlcoin. Search transactions, addresses, blocks, smart-contracts, tokens.
   block:
       summary: 'Summary of block #'
       block_hash: '. Block hash: ' 
       block_reward: '. Block reward: ' 
-      txcounts: ' BCS. Block transaction count ' 
+      txcounts: ' HTML. Block transaction count ' 
       block_size: '.  Block size: '
   address:
       summary: 'Summary of address '
@@ -12,26 +12,26 @@ descriptions:
       balance: '. Balance: ' 
       blocks_mined: ' sat. Blocks mined: ' 
       tx_count: '. Transaction count: '
-  block_list: The block list of BCSChain blockchain. Block height. Block timestamp. Block reward. Block size. Transaction count.
+  block_list: The block list of Htmlcoin blockchain. Block height. Block timestamp. Block reward. Block size. Transaction count.
   misc:
-    charts: BCSChain statistics in charts. Daily transactions. Block interval. Address growth.
-    rich_list: BCS Coin owners list. Rating. Balance. Ownership percentage.
-    biggest_miners: Stakers statistics in BCSChain. Rating. Blocks mined. Percentage. Balance.
-    stake_calc: Staking calculator in BCSChain. Find out how many coins you can mine.
-    raw_tx: Send transaction in BCSChain network with hex-code.
+    charts: Htmlcoin statistics in charts. Daily transactions. Block interval. Address growth.
+    rich_list: Htmlcoin owners list. Rating. Balance. Ownership percentage.
+    biggest_miners: Stakers statistics in Htmlcoin. Rating. Blocks mined. Percentage. Balance.
+    stake_calc: Staking calculator in Htmlcoin. Find out how many coins you can mine.
+    raw_tx: Send transaction in Htmlcoin network with hex-code.
   contract: 
     summary: 'Summary of smart-contract '
     token_name: '. Token name - '
     ticker: '. Ticker - '
     total_supply: '. Total supply: '
     tx_list: '. Transactions and owners list of the token '
-  tokens: Tokens list in BCSChian network. Rating. Token names. Total supply. Transactions. Token owners.
+  tokens: Tokens list in Htmlcoin network. Rating. Token names. Total supply. Transactions. Token owners.
   transaction:
     summary: 'Summary of transaction '
     block: '. Included in block '
     tx_size: '. Transaction size: '
     confirms: '. Confirmations: '
-    blockchain:
+blockchain:
   blockchain: Blockchain
   address: Address | Addresses
   block: Block | Blocks
