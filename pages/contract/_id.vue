@@ -17,7 +17,7 @@
         <template v-if="hrc20">
           <div class="columns" v-if="hrc20.name">
             <div class="column info-title">{{ $t('contract.token.name') }}</div>
-            <div class="column info-value">{{ hrc20.name }}</div>
+            <div class="column info-value">{{ hrc20.name }} ({{ hrc20.symbol }})</div>
           </div>
           <div class="columns" v-if="hrc20.holders">
             <div class="column info-title">{{ $t('contract.token.total_supply') }}</div>
@@ -46,15 +46,15 @@
         </template>
         <div class="columns">
           <div class="column info-title">{{ $t('contract.balance') }}</div>
-          <div class="column info-value monospace">{{ balance | htmlcoin }} HTMLCOIN</div>
+          <div class="column info-value monospace">{{ balance | htmlcoin }} HTML</div>
         </div>
         <div class="columns">
           <div class="column info-title">{{ $t('contract.total_received') }}</div>
-          <div class="column info-value monospace">{{ totalReceived | htmlcoin }} HTMLCOIN</div>
+          <div class="column info-value monospace">{{ totalReceived | htmlcoin }} HTML</div>
         </div>
         <div class="columns">
           <div class="column info-title">{{ $t('contract.total_sent') }}</div>
-          <div class="column info-value monospace">{{ totalSent | htmlcoin }} HTMLCOIN</div>
+          <div class="column info-value monospace">{{ totalSent | htmlcoin }} HTML</div>
         </div>
         <div class="columns" v-if="existingTokenBalances.length">
           <div class="column info-title">{{ $t('address.token_balances') }}</div>
