@@ -62,7 +62,7 @@
                         <AddressLink :address="block.miner" />
                       </i18n>
                       <br>
-                      {{ $t('block.brief.transaction', [block.transactionCount, block.interval]) }}
+{{ block.transactionCount }} {{ $tc('block.brief.transaction', block.transactionCount) }} {{ $t('block.brief.in') }} {{ block.interval }} {{ $tc('block.brief.seconds', block.interval) }}
                       <br>
                       <span class="monospace">
                         {{ $t('block.brief.reward') }} {{ block.reward | htmlcoin }} HTML
@@ -204,7 +204,7 @@
 
   .htmlcoin-block {
     padding: 1em;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #08A1D2;
     &:first-child {
       border-top: none;
     }
@@ -214,7 +214,7 @@
     flex-direction: column;
     min-width: 11em;
     padding: 1em;
-    background-color: #eee;
+    background-color: #08A1D2;
     color: inherit;
     &:hover {
       outline: 1px solid @htmlcoin;
@@ -236,7 +236,7 @@
 
   .transaction {
     padding: 0.5em 1em;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #08A1D2;
     &:first-child {
       border-top: none;
     }
