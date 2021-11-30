@@ -109,7 +109,7 @@
       },
       reward() {
         let height = this.blockchain.height - 5001
-        let interval = 985500
+        let interval = 7680000
         let halvings = Math.floor(height / interval)
         return halvings === 7 ? 0 : 4e8 >>> halvings
       }
