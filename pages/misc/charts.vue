@@ -66,7 +66,7 @@
               type: 'bar',
               name: this.$tc('misc.stats.contract_transactions', 2),
               stack: 1,
-              itemStyle: {color: '#64cc6d', opacity: '0.2'},
+              itemStyle: {color: '#f7931e', opacity: '0.5'},
 			                   emphasis: {itemStyle: {color: '#64cc6d', opacity: '1'}},
         data: this.dailyTransactions.map(({time, contractTransactionCount}) => [time, contractTransactionCount])
             },
@@ -75,7 +75,7 @@
               name: this.$tc('misc.stats.total_transactions', 2),
               stack: 1,
               itemStyle: {color: 'rgba(8,161,210,0.2)'},
-			                   emphasis: {itemStyle: {color: 'rgba(8,161,210,1)'}},
+			                   emphasis: {itemStyle: {color: 'rgba(52, 99, 162,1)'}},
         data: this.dailyTransactions.map(({time, transactionCount, contractTransactionCount}) => [
                 time, transactionCount - contractTransactionCount, transactionCount
               ]),
@@ -88,7 +88,7 @@
           ],
           dataZoom: {
             type: 'slider',
-            startValue: Date.now() - 30 * 24 * 3600 * 1000
+            startValue: Date.now() - 30 * 24 * 3600 * 3000
           },
           useUTC: true
         })
@@ -108,7 +108,7 @@
         chart.setOption({
           title: {text: this.$t('misc.stats.block_interval'), textStyle: {color: 'rgba(8,161,210, 1)'}},
                tooltip: {trigger: 'axis', axisPointer: {axis: 'x'}},
-	  textStyle: {color: 'rgb(187,159,137)'},
+	  textStyle: {color: 'rgb(8,161,210)'},
           xAxis: {
             type: 'value',
             name: this.$t('misc.stats.interval'),
@@ -123,11 +123,11 @@
             type: 'bar',
             name: this.$t('misc.stats.blocks'),
             symbol: 'none',
-            itemStyle: {color: 'rgba(8,161,210, 1)'},
-            lineStyle: {color: 'rgba(8,161,210, 1)'},
+            itemStyle: {color: 'rgba(52, 99, 162, 1)'},
+            lineStyle: {color: 'rgba(52, 99, 162, 1)'},
             data: this.blockInterval.map(({interval, count}) => [interval, count])
           },
-          dataZoom: {type: 'slider', endValue: 300}
+          dataZoom: {type: 'slider', startValue: -21, endValue: 300}
         })
       },
       async renderAddressGrowth() {
@@ -141,7 +141,7 @@
         let chart = echarts.init(this.$refs['address-growth'])
         chart.setOption({
           title: {text: this.$t('misc.stats.address_growth'), textStyle: {color: 'rgba(8,161,210, 1)'}},
-		             textStyle: {color: 'rgb(187,159,137)'},
+		             textStyle: {color: 'rgb(8,161,210)'},
       tooltip: {trigger: 'axis', axisPointer: {axis: 'x'}},
           xAxis: {type: 'time'},
           yAxis: {type: 'value', minInterval: 1},
