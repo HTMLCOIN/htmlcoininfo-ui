@@ -15,7 +15,7 @@
           <td>
             <AddressLink :address="address" />
           </td>
-          <td class="monospace break-word">{{ balance | htmlcoin(8) }} HTML</td>
+          <td class="monospace break-word">{{ balance | htmlcoin(0) }} HTML</td>
         </tr>
       </tbody>
     </table>
