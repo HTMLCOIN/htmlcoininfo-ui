@@ -107,7 +107,8 @@
         let chart = echarts.init(this.$refs['block-interval'])
         chart.setOption({
           title: {text: this.$t('misc.stats.block_interval'), textStyle: {color: 'rgba(8,161,210, 1)'}},
-          tooltip: {trigger: 'axis', axisPointer: {axis: 'x'}},
+               tooltip: {trigger: 'axis', axisPointer: {axis: 'x'}},
+	  textStyle: {color: 'rgb(187,159,137)'},
           xAxis: {
             type: 'value',
             name: this.$t('misc.stats.interval'),
@@ -126,7 +127,7 @@
             lineStyle: {color: 'rgba(8,161,210, 1)'},
             data: this.blockInterval.map(({interval, count}) => [interval, count])
           },
-          dataZoom: {type: 'slider', endValue: 600}
+          dataZoom: {type: 'slider', endValue: 300}
         })
       },
       async renderAddressGrowth() {
