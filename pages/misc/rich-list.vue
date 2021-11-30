@@ -17,7 +17,7 @@
             <AddressLink :address="address" />
           </td>
           <td class="monospace break-word">{{ balance | htmlcoin(8) }} HTML</td>
-          <td class="monospace">{{ (balance / totalSupply * 100).toFixed(4) + '%' }}</td>
+          <td class="monospace">{{ (balance / totalSupply / 1000000).toFixed(2) + '%' }}</td>
         </tr>
       </tbody>
     </table>
