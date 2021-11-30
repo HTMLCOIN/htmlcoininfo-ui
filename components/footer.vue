@@ -27,7 +27,7 @@
         </li>
       </ul>
       <div class="copyright">
-        2021 The Htmlcoin Foundation
+        2021 - The Htmlcoin Foundation
       </div>
     </div>
   </footer>
